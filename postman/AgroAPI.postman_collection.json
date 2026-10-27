@@ -1,0 +1,939 @@
+{
+  "info": {
+    "name": "AgroAPI - Joan Rodriguez",
+    "description": "Coleccion de pruebas del servicio AgroSierra. Autor: Joan Rodriguez. Ejecutar primero la carpeta 1.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Autenticacion",
+      "item": [
+        {
+          "name": "Login tecnico1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"tecnico1\",\n  \"contrasena\": \"Agro2026*\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('tokenTecnico', pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login jefe1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"jefe1\",\n  \"contrasena\": \"Agro2026*\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('tokenJefe', pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"admin\",\n  \"contrasena\": \"Agro2026*\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('200', () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('tokenAdmin', pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login credenciales incorrectas (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"jefe1\",\n  \"contrasena\": \"mala\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Usuario actual",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "me"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Lotes",
+      "item": [
+        {
+          "name": "Padron paginado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/lotes?pagina=0&tamanio=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lotes"
+              ],
+              "query": [
+                {
+                  "key": "pagina",
+                  "value": "0"
+                },
+                {
+                  "key": "tamanio",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Padron filtrado por valle y estado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/lotes?valle=Mantaro&estado=ABIERTA",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lotes"
+              ],
+              "query": [
+                {
+                  "key": "valle",
+                  "value": "Mantaro"
+                },
+                {
+                  "key": "estado",
+                  "value": "ABIERTA"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Detalle lote 1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/lotes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lotes",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Lote inexistente (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/lotes/999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lotes",
+                "999"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Labores del lote 1",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/lotes/1/labores?pagina=0&tamanio=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lotes",
+                "1",
+                "labores"
+              ],
+              "query": [
+                {
+                  "key": "pagina",
+                  "value": "0"
+                },
+                {
+                  "key": "tamanio",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Labores (CRUD)",
+      "item": [
+        {
+          "name": "Registrar labor (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/labores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "labores"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loteId\": 1,\n  \"tipo\": \"RIEGO\",\n  \"fecha\": \"2026-10-27\",\n  \"responsable\": \"Joan Rodriguez\",\n  \"cantidad\": 12.5,\n  \"observacion\": \"Registro de prueba\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('laborId', pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Corregir labor propia (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/labores/{{laborId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "labores",
+                "{{laborId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loteId\": 1,\n  \"tipo\": \"RIEGO\",\n  \"fecha\": \"2026-10-27\",\n  \"responsable\": \"Joan Rodriguez\",\n  \"cantidad\": 15.0,\n  \"observacion\": \"Registro de prueba\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Eliminar labor como jefe (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenJefe}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/labores/{{laborId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "labores",
+                "{{laborId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 204', () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Errores 401 / 403 / 400 / 409",
+      "item": [
+        {
+          "name": "Sin token (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/lotes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lotes"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Token alterado (401)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}x"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/lotes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lotes"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tecnico elimina labor (403)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/labores/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "labores",
+                "1"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tecnico cierra campania (403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/lotes/1/cerrar-campania",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lotes",
+                "1",
+                "cerrar-campania"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Admin registra labor (403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenAdmin}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/labores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "labores"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loteId\": 1,\n  \"tipo\": \"RIEGO\",\n  \"fecha\": \"2026-10-27\",\n  \"responsable\": \"Joan Rodriguez\",\n  \"cantidad\": 12.5,\n  \"observacion\": \"Registro de prueba\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RN-02 tecnico corrige labor ajena/antigua (403)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/labores/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "labores",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loteId\": 1,\n  \"tipo\": \"RIEGO\",\n  \"fecha\": \"2026-10-27\",\n  \"responsable\": \"Joan Rodriguez\",\n  \"cantidad\": 12.5,\n  \"observacion\": \"Registro de prueba\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Validacion por campo (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/labores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "labores"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loteId\": 1,\n  \"tipo\": \"RIEGO\",\n  \"fecha\": \"2026-10-27\",\n  \"responsable\": \"\",\n  \"cantidad\": -5\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RN-04 dosis excesiva (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/labores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "labores"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loteId\": 1,\n  \"tipo\": \"FUMIGACION\",\n  \"fecha\": \"2026-10-27\",\n  \"responsable\": \"Joan Rodriguez\",\n  \"cantidad\": 50,\n  \"observacion\": \"Registro de prueba\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RN-01 lote con campania cerrada (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenTecnico}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/labores",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "labores"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"loteId\": 7,\n  \"tipo\": \"RIEGO\",\n  \"fecha\": \"2026-10-27\",\n  \"responsable\": \"Joan Rodriguez\",\n  \"cantidad\": 12.5,\n  \"observacion\": \"Registro de prueba\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "RN-03 cerrar lote sin cosecha (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenJefe}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/lotes/2/cerrar-campania",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lotes",
+                "2",
+                "cerrar-campania"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cerrar campania con cosecha (200)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{tokenJefe}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/lotes/1/cerrar-campania",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "lotes",
+                "1",
+                "cerrar-campania"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api/v1"
+    },
+    {
+      "key": "tokenTecnico",
+      "value": ""
+    },
+    {
+      "key": "tokenJefe",
+      "value": ""
+    },
+    {
+      "key": "tokenAdmin",
+      "value": ""
+    },
+    {
+      "key": "laborId",
+      "value": ""
+    }
+  ]
+}
